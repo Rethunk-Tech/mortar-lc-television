@@ -33,6 +33,9 @@ public class Plugin : BaseUnityPlugin
     // Each video's length in seconds; 0 for one that can't play. Null until measured.
     private static double[]? lengths;
     private static bool measuring;
+    // Lengths already measured, by file, so a reload only opens the new ones; and which measure is current.
+    private static readonly Dictionary<string, double> known = [];
+    private static int measureRound;
     private static SyncedEntry<bool> channel = null!, mixGame = null!, shuffle = null!;
     // With the channel off, the show each TV plays next.
     private static readonly Dictionary<TVScript, int> nextShow = [];
@@ -82,6 +85,7 @@ public class Plugin : BaseUnityPlugin
         DontDestroyOnLoad(holder);
         holder.hideFlags = HideFlags.HideAndDontSave;
         runner = holder.AddComponent<Runner>();
+        Watch.Start(holder, Reload, Paths.PluginPath);
         if (videos.Length > 0)
         {
             TakeOver();
@@ -103,7 +107,7 @@ public class Plugin : BaseUnityPlugin
     private static bool IsVideo(string file) =>
         file.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".webm", StringComparison.OrdinalIgnoreCase);
 
-    // Without a single video the game's TV is left alone.
+    // Without a single video the game's TV is left alone; the first one dropped in hands it over.
     private static void TakeOver()
     {
         if (hooks.Count > 0)
@@ -117,6 +121,39 @@ public class Plugin : BaseUnityPlugin
         hooks.Add(new Hook(typeof(StartOfRound).GetMethod("Start", any), ShipLoaded));
         // Measure now so the first switch-on doesn't wait.
         StartMeasure();
+    }
+
+    // New and changed videos are measured; the ones already measured keep their lengths.
+    private static void Reload(IReadOnlyCollection<string> changed)
+    {
+        if (!changed.Any(f => IsVideo(f) || Path.GetExtension(f) == ""))
+        {
+            return;
+        }
+        if (lengths != null)
+        {
+            for (int i = 0; i < videos.Length; i++)
+            {
+                if (!changed.Contains(videos[i]))
+                {
+                    known[videos[i]] = lengths[i];
+                }
+            }
+        }
+        foreach (string file in changed)
+        {
+            known.Remove(file);
+        }
+        videos = Videos();
+        Log.LogInfo($"Found {videos.Length} videos");
+        lengths = null;
+        measuring = false;
+        measureRound++;
+        if (videos.Length > 0)
+        {
+            TakeOver();
+            StartMeasure();
+        }
     }
 
     private static void ShipLoaded(Action<StartOfRound> orig, StartOfRound self)
@@ -327,7 +364,7 @@ public class Plugin : BaseUnityPlugin
         var holder = new GameObject("Television lengths");
         DontDestroyOnLoad(holder);
         holder.hideFlags = HideFlags.HideAndDontSave;
-        holder.AddComponent<Measurer>().StartCoroutine(Measure(holder));
+        holder.AddComponent<Measurer>().StartCoroutine(Measure(holder, measureRound));
     }
 
     // The game still syncs whether the TV is on; this decides what it shows. Like the game, it goes dark for a player
@@ -536,7 +573,7 @@ public class Plugin : BaseUnityPlugin
     }
 
     // A video's length is only known once Unity has opened it, so each is opened once on a hidden player.
-    private static IEnumerator Measure(GameObject holder)
+    private static IEnumerator Measure(GameObject holder, int round)
     {
         VideoPlayer probe = holder.AddComponent<VideoPlayer>();
         probe.playOnAwake = false;
@@ -548,6 +585,10 @@ public class Plugin : BaseUnityPlugin
         double[] measured = new double[list.Length];
         for (int i = 0; i < list.Length; i++)
         {
+            if (known.TryGetValue(list[i], out measured[i]))
+            {
+                continue;
+            }
             failed = false;
             probe.url = new Uri(list[i]).AbsoluteUri;
             probe.Prepare();
@@ -564,6 +605,11 @@ public class Plugin : BaseUnityPlugin
             }
         }
         Destroy(holder);
+        // A reload started a newer measure.
+        if (round != measureRound)
+        {
+            yield break;
+        }
         lengths = measured;
         TVScript tv = FindObjectOfType<TVScript>();
         if (tv != null && tv.wasTvOnLastFrame)
