@@ -1,0 +1,16 @@
+{
+  "template": "Rethunk-Tech/mortar-bepinex5-template",
+  "ref": "main",
+  "name": "Television",
+  "values": {
+    "audience": "everyone",
+    "categories": "mods|bepinex",
+    "description": "Plays videos from TV packs on the ship's TV, the same video at the same moment for everyone.",
+    "idPrefix": "tech.rethunk.mortar",
+    "modAuthor": "Rethunk Tech",
+    "repositoryUrl": "https://github.com/Rethunk-Tech/mortar-lc-television",
+    "team": "Mortar"
+  },
+  "game": "lethal-company",
+  "templateIcon": "d3a38903c594a29010cbe8ec0b4636e431b9d054d5a51524b656f682cc8ec71a"
+}

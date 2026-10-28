@@ -1,0 +1,21 @@
+version: 2
+# Dependabot can only reach registries listed here, and the project restores from these feeds (Directory.Build.targets).
+registries:
+  bepinex:
+    type: nuget-feed
+    url: https://nuget.bepinex.dev/v3/index.json
+  windows10ce:
+    type: nuget-feed
+    url: https://nuget.windows10ce.com/nuget/v3/index.json
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    registries:
+      - bepinex
+      - windows10ce
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>tech.rethunk.mortar.Television</AssemblyName>
+    <AssemblyTitle>Television</AssemblyTitle>
+    <RootNamespace>Television</RootNamespace>
+    <RepositoryUrl>https://github.com/Rethunk-Tech/mortar-lc-television</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsThunderstorePackable>true</IsThunderstorePackable>
+    <ThunderstoreName>Television</ThunderstoreName>
+    <ThunderstoreDescription>Plays videos from TV packs on the ship%27s TV, the same video at the same moment for everyone.</ThunderstoreDescription>
+    <ThunderstoreCommunities>lethal-company</ThunderstoreCommunities>
+    <ThunderstoreCategories>mods;bepinex</ThunderstoreCategories>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ModFile Include="$(TargetPath)" Destination="plugins/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ThunderstorePackageFile Include="$(SolutionRoot)README.md" />
+    <ThunderstorePackageFile Include="$(SolutionRoot)CHANGELOG.md" />
+    <ThunderstorePackageFile Include="$(SolutionRoot)icon.png" />
+    <ThunderstorePackageFile Include="$(SolutionRoot)LICENSE" />
+    <ThunderstoreDependency Include="BepInEx-BepInExPack" Version="5.4.2305" />
+  </ItemGroup>
+</Project>

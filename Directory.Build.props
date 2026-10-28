@@ -1,0 +1,40 @@
+<Project>
+  <PropertyGroup>
+    <SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionRoot)Config.Build.user.props" Condition="Exists('$(SolutionRoot)Config.Build.user.props')" />
+
+  <PropertyGroup>
+    <ThunderstoreTeam>Mortar</ThunderstoreTeam>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>recommended</AnalysisMode>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <Version>0.1.0</Version>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Rethunk Tech</Authors>
+    <Company>Rethunk Tech</Company>
+    <Copyright>Copyright (c) 2026 Rethunk Tech</Copyright>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PathBeforeSteam Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.local/share/</PathBeforeSteam>
+    <PathBeforeSteam Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(MSBuildProgramFiles32)/</PathBeforeSteam>
+    <GameRootDir Condition="'$(GameRootDir)' == ''">$(PathBeforeSteam)Steam/steamapps/common/Lethal Company/</GameRootDir>
+    <GameRootDir>$([MSBuild]::EnsureTrailingSlash('$(GameRootDir)'))</GameRootDir>
+    <ManagedDir>$(GameRootDir)Lethal Company_Data/Managed/</ManagedDir>
+  </PropertyGroup>
+</Project>
