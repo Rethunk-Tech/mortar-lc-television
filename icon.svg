@@ -1,12 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <rect width="256" height="256" rx="40" fill="#24262C"/>
-  <g fill="#7C818C">
-    <rect x="70" y="86" width="104" height="104" rx="10"/>
-    <circle cx="122" cy="80" r="22"/>
-    <circle cx="180" cy="138" r="22"/>
-  </g>
-  <g fill="#24262C">
-    <circle cx="70" cy="138" r="20"/>
-    <circle cx="122" cy="190" r="20"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><defs><pattern id="bricks" width="56" height="60" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="48" height="22" rx="4" fill="#1F1F26"/><rect x="-24" y="34" width="48" height="22" rx="4" fill="#1F1F26"/><rect x="32" y="34" width="48" height="22" rx="4" fill="#1F1F26"/></pattern>
+<filter id="drop" x="-25%" y="-25%" width="150%" height="160%">
+<feGaussianBlur in="SourceAlpha" stdDeviation="4"/><feOffset dy="6" result="b"/><feFlood flood-color="#000" flood-opacity="0.7"/><feComposite in2="b" operator="in"/>
+<feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="pocket" x="-20%" y="-20%" width="140%" height="140%"><feOffset in="SourceAlpha" dy="4"/><feGaussianBlur stdDeviation="2.8" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#000" flood-opacity="0.9"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter></defs><rect width="256" height="256" fill="#19191E"/><rect width="256" height="256" fill="url(#bricks)"/><g transform="translate(30.0 30.0) scale(8.166666666666666)"><g filter="url(#drop)"><path d="M12 6.5 L8 2 M12 6.5 L16 2" stroke="#D6B17A" stroke-width="1.5" stroke-linecap="round"/><rect x="1.5" y="6" width="21" height="15.5" rx="2.6" fill="#D6B17A"/></g></g><g filter="url(#pocket)"><rect x="61.03" y="97.78" width="102.90" height="89.02" rx="14" fill="#19191E"/><rect x="61.03" y="97.78" width="102.90" height="89.02" rx="14" fill="url(#bricks)"/></g><g transform="translate(30.0 30.0) scale(8.166666666666666)"><circle cx="19.3" cy="11" r="1.2" fill="#19191E"/><circle cx="19.3" cy="15.2" r="1.2" fill="#19191E"/><path d="M6.5 15.5 Q8.2 12.2 10.1 13.8 T13.7 12" fill="none" stroke="#F2F0EA" stroke-width="1.1" stroke-linecap="round"/></g></svg>
