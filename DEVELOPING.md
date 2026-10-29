@@ -37,7 +37,9 @@ types, so tests reach the code through other classes, with `InternalsVisibleTo` 
 
 Pushing a `vX.Y.Z` tag publishes from CI with the `THUNDERSTORE_API_TOKEN` secret, once the build passes. To publish from your own computer,
 create a service account token for the team on Thunderstore (Settings, Teams, Service Accounts) and store it once.
-Mortar's Develop tab stores it in the same place when you upload from there.
+Mortar's Develop tab stores it in the same place when you upload from there. The Flatpak build of Mortar does that only
+when it can use your system keyring; otherwise it keeps the token inside its sandbox, where this build can't read it,
+so store it yourself as below.
 
 - Linux: `secret-tool store --label "Thunderstore Mortar" service thunderstore username Mortar`, then paste the token.
 - Windows: `Install-Module CredentialManager`, then
