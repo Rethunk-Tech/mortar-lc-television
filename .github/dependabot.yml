@@ -15,6 +15,11 @@ updates:
       - windows10ce
     schedule:
       interval: weekly
+    # Mirrors .repo-ops.toml: GameLibs tracks the targeted game build by hand, and the game loads BepInEx 5.
+    ignore:
+      - dependency-name: LethalCompany.GameLibs.Steam
+      - dependency-name: BepInEx.Core
+        versions: [">= 6.0.0-0"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
