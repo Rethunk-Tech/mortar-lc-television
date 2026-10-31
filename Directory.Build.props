@@ -23,7 +23,7 @@
   <PropertyGroup>
     <Authors>Rethunk Tech</Authors>
     <Company>Rethunk Tech</Company>
-    <Copyright>Copyright (c) 2026 Rethunk Tech</Copyright>
+    <Copyright>Copyright (c) 2026 Rethunk.Tech, LLC</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
