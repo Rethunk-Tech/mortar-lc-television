@@ -165,9 +165,11 @@
        MortarDependencyFolder item. Anything else (everything, in CI or a fresh clone) is downloaded from Thunderstore
        into artifacts/ and referenced from there. BepInExPack is skipped: it's the loader itself, and the BepInEx
        packages already compile against it. -->
+  <!-- Dependabot sets DEPENDABOT and its proxy blocks thunderstore.io; resolving package versions needs no mod DLLs. -->
   <Target
     Name="FetchThunderstoreDependencies"
     BeforeTargets="ResolveAssemblyReferences"
+    Condition="'$(DEPENDABOT)' == ''"
   >
     <PropertyGroup>
       <DependencyCache>$(SolutionRoot)artifacts/dependencies/</DependencyCache>
