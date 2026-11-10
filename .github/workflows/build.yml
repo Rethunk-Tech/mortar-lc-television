@@ -57,7 +57,8 @@ jobs:
       - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: "10.x"
-          cache: true
+          # A restored cache could be poisoned by any earlier run; the release builds clean.
+          cache: false
           cache-dependency-path: "**/packages.lock.json"
       - run: dotnet restore --locked-mode
       - name: Pack and publish to Thunderstore
