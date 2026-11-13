@@ -1,0 +1,75 @@
+# CodeQL advanced setup: every language in this repository with the security-and-quality suite, re-runnable
+# from the Actions tab. C# is built, so CodeQL resolves its NuGet and game references; every other language is
+# extracted without a build.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "4 15 * * 4"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    # Code scanning on a private repository needs paid Code Security; it starts once the repository is public.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: csharp
+            build-mode: manual
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-and-quality
+      # The .NET setup, restore and build from build.yml, kept in step with it.
+      - name: Set up .NET
+        if: matrix.build-mode == 'manual'
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: "10.x"
+          # Nothing gets restored in the template repo, and caching an empty NuGet folder fails the job.
+          cache: ${{ hashFiles('.template.config/template.json') == '' }}
+          cache-dependency-path: "**/packages.lock.json"
+      - name: Restore
+        if: matrix.build-mode == 'manual' && hashFiles('.template.config/template.json') == ''
+        run: dotnet restore --locked-mode
+      - name: Build
+        if: matrix.build-mode == 'manual' && hashFiles('.template.config/template.json') == ''
+        run: dotnet build -c Release --no-restore
+      # The template's own sources keep template conditionals and do not build as they stand, which is why build.yml
+      # skips them here. Build a mod generated from it instead, so this repo still gets a real C# build to analyze.
+      - name: Build a generated mod
+        if: matrix.build-mode == 'manual' && hashFiles('.template.config/template.json') != ''
+        run: |
+          dotnet new install . --force
+          dotnet new mortar-lc-bepinex5 -n CodeQLBuild -o codeql-build \
+            --description "Built for CodeQL" --modAuthor Rethunk --team Rethunk --idPrefix com.rethunktech.codeqlbuild
+          dotnet restore codeql-build --locked-mode
+          dotnet build codeql-build -c Release --no-restore
+      - name: Analyze
+        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          category: /language:${{ matrix.language }}
